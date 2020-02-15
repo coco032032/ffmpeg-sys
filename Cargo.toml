@@ -1,0 +1,14 @@
+[package]
+name = "ffmpeg-sys"
+version = "0.1.0"
+authors = ["coco"]
+license = "LGPL-2.1"
+
+[lib]
+name = "ffmpeg_sys"
+path = "src/lib.rs"
+
+[build-dependencies]
+bindgen = "0.53.1"
+cc = "1.0.50"
+pkg-config = "0.3.17"
