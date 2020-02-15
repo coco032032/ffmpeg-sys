@@ -1,0 +1,43 @@
+name: Rust
+
+on: [push]
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependeicies
+      run: 
+        sudo apt update && sudo apt install -y libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libswresample-dev clang
+    - name: Build
+      run: cargo build --verbose
+    - name: Run tests
+      run: cargo test --verbose
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependeicies
+      run: 
+        brew update && brew install pkg-config ffmpeg
+    - name: Build
+      run: cargo build --verbose
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        curl -L "https://ffmpeg.zeranoe.com/builds/win64/dev/ffmpeg-latest-win64-dev.zip" -o ../ffmpeg-dev-latest.zip
+        Expand-Archive ../ffmpeg-dev-latest.zip -DestinationPath ../ffmpeg-dev-latest
+        choco install llvm
+    - name: Setup
+      run: |
+        $lib_path = (resolve-path ../ffmpeg-dev-latest/ffmpeg-latest-win64-dev/lib).Path
+        $include_path = (resolve-path ../ffmpeg-dev-latest/ffmpeg-latest-win64-dev/include).Path
+        echo "::set-env name=FFMPEG_LIB_DIR::$lib_path"
+        echo "::set-env name=FFMPEG_INCLUDE_DIR::$include_path"
+    - name: Build
+      run: |
+        cargo build --verbose
